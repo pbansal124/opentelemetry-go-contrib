@@ -82,7 +82,7 @@ func (gce *GCE) Detect(ctx context.Context) (*resource.Resource, error) {
 	for _, key := range customMetadataKeys {
 		value, err := metadata.InstanceAttributeValue(key)
 		if err != nil {
-			errorInfo = append(errInfo, "failed to get custom metadata "+key+": "+err.Error())
+			errInfo = append(errInfo, "failed to get custom metadata "+key+": "+err.Error())
 			continue
 		}
 		if value != "" {
