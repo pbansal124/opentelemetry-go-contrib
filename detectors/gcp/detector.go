@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"encoding/json"
 
 	"cloud.google.com/go/compute/metadata"
 	"github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp"
@@ -28,6 +29,18 @@ func NewDetector() resource.Detector {
 
 type detector struct {
 	detector gcpDetector
+}
+
+func(d *detector) GCECustomMetadata(ctx context.Context) (map[string]interface{}, error) {
+	jsonStr, err := metadata.GetWithContext(ctx, "instance/attributes/?recursive=true&alt=json")
+	if err != null {
+		return nil, err
+	}
+	vars attrs map[string]interface{}
+	if err := json.Unmarshall([]byte(jsonStr), &attrs); err != nil {
+		return nil, err
+	}
+	return attrs, nil
 }
 
 // Detect detects associated resources when running on GCE, GKE, GAE,
@@ -86,6 +99,11 @@ func (d *detector) Detect(ctx context.Context) (*resource.Resource, error) {
 		b.add(semconv.HostNameKey, d.detector.GCEHostName)
 		b.add(semconv.GCPGCEInstanceNameKey, d.detector.GCEInstanceName)
 		b.add(semconv.GCPGCEInstanceHostnameKey, d.detector.GCEInstanceHostname)
+		if attrs, err := d.GCECustomMetadata(ctx); err == nil {
+			for k, v := attrs {
+				key := "service." + k
+				b.attrs().PutStr(key, fmt.Sprintf("%v", v))
+		}
 	default:
 		// We don't support this platform yet, so just return with what we have
 	}
