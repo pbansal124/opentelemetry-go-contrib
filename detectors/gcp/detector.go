@@ -33,11 +33,11 @@ type detector struct {
 
 func(d *detector) GCECustomMetadata(ctx context.Context) (map[string]interface{}, error) {
 	jsonStr, err := metadata.GetWithContext(ctx, "instance/attributes/?recursive=true&alt=json")
-	if err != null {
+	if err != nil {
 		return nil, err
 	}
-	vars attrs map[string]interface{}
-	if err := json.Unmarshall([]byte(jsonStr), &attrs); err != nil {
+	var attrs map[string]interface{}
+	if err := json.Unmarshal([]byte(jsonStr), &attrs); err != nil {
 		return nil, err
 	}
 	return attrs, nil
@@ -100,9 +100,11 @@ func (d *detector) Detect(ctx context.Context) (*resource.Resource, error) {
 		b.add(semconv.GCPGCEInstanceNameKey, d.detector.GCEInstanceName)
 		b.add(semconv.GCPGCEInstanceHostnameKey, d.detector.GCEInstanceHostname)
 		if attrs, err := d.GCECustomMetadata(ctx); err == nil {
-			for k, v := attrs {
+			for k, v := range attrs {
 				key := "service." + k
-				b.attrs().PutStr(key, fmt.Sprintf("%v", v))
+				b.attrs() = append(b.attrs, attribute.String(key, fmt.Sprintf("%v", v))
+		} else {
+			fmt.Printf("failed to retrieve GCE custom metadata: %v\n", err)
 		}
 	default:
 		// We don't support this platform yet, so just return with what we have
