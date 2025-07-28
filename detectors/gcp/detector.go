@@ -103,6 +103,7 @@ func (d *detector) Detect(ctx context.Context) (*resource.Resource, error) {
 			for k, v := range attrs {
 				key := "service." + k
 				b.attrs = append(b.attrs, attribute.String(key, fmt.Sprintf("%v", v))
+			}
 		} else {
 			fmt.Printf("failed to retrieve GCE custom metadata: %v\n", err)
 		}
