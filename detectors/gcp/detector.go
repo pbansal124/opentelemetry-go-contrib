@@ -46,7 +46,7 @@ func(d *detector) GCECustomMetadata(ctx context.Context) (map[string]interface{}
 // Detect detects associated resources when running on GCE, GKE, GAE,
 // Cloud Run, and Cloud functions.
 func (d *detector) Detect(ctx context.Context) (*resource.Resource, error) {
-	fmt.Println("GCP Detector (pbansal124): Detect method STARTED."
+	fmt.Println("GCP Detector (pbansal124): Detect method STARTED.")
 	if !metadata.OnGCE() {
 		return nil, nil
 	}
