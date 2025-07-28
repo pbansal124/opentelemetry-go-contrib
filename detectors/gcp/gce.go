@@ -79,10 +79,10 @@ func (gce *GCE) Detect(ctx context.Context) (*resource.Resource, error) {
 	}
 
 	customMetadataKeys := []string{"cost-center"}
-	for _,key := range customMetadataKeys {
+	for _, key := range customMetadataKeys {
 		value, err := metadata.InstanceAttributeValue(key)
 		if err != nil {
-			errorInfo = append(errInfo, "failed to get custom metadata "+key+": "err.Error())
+			errorInfo = append(errInfo, "failed to get custom metadata "+key+": "+err.Error())
 			continue
 		}
 		if value != "" {
