@@ -100,12 +100,12 @@ func (d *detector) Detect(ctx context.Context) (*resource.Resource, error) {
 		b.add(semconv.GCPGCEInstanceNameKey, d.detector.GCEInstanceName)
 		b.add(semconv.GCPGCEInstanceHostnameKey, d.detector.GCEInstanceHostname)
 		if attrs, err := d.GCECustomMetadata(ctx); err == nil {
-			for k, v := range attrs {
-				key := "service." + k
-				b.attrs = append(b.attrs, attribute.String(key, fmt.Sprintf("%v", v))
-			}
+    			for k, v := range attrs {
+        			key := "service." + k
+        			b.attrs = append(b.attrs, attribute.String(key, fmt.Sprintf("%v", v)))
+    			}
 		} else {
-			fmt.Printf("failed to retrieve GCE custom metadata: %v\n", err)
+    			fmt.Printf("failed to retrieve GCE custom metadata: %v\n", err)
 		}
 	default:
 		// We don't support this platform yet, so just return with what we have
