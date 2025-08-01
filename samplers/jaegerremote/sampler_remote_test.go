@@ -28,14 +28,13 @@ import (
 	"time"
 
 	"github.com/go-logr/logr/testr"
+	jaeger_api_v2 "github.com/jaegertracing/jaeger-idl/proto-gen/api_v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-
-	jaeger_api_v2 "github.com/jaegertracing/jaeger-idl/proto-gen/api_v2"
-
-	"go.opentelemetry.io/contrib/samplers/jaegerremote/internal/testutils"
 	"go.opentelemetry.io/otel/sdk/trace"
 	oteltrace "go.opentelemetry.io/otel/trace"
+
+	"go.opentelemetry.io/contrib/samplers/jaegerremote/internal/testutils"
 )
 
 func TestRemotelyControlledSampler_updateConcurrentSafe(t *testing.T) {
@@ -86,7 +85,7 @@ func (c *testSamplingStrategyFetcher) Fetch(serviceName string) ([]byte, error) 
 
 type testSamplingStrategyParser struct{}
 
-func (p *testSamplingStrategyParser) Parse(response []byte) (interface{}, error) {
+func (p *testSamplingStrategyParser) Parse(response []byte) (any, error) {
 	strategy := new(jaeger_api_v2.SamplingStrategyResponse)
 
 	switch string(response) {

@@ -10,7 +10,6 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
-
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/log"
 	"go.opentelemetry.io/otel/log/embedded"
@@ -423,7 +422,7 @@ func TestConvertFields(t *testing.T) {
 		},
 		{
 			name:   "with an interface slice",
-			fields: logrus.Fields{"hello": []interface{}{"foo", 42}},
+			fields: logrus.Fields{"hello": []any{"foo", 42}},
 			want: []log.KeyValue{
 				log.Slice("hello",
 					log.StringValue("foo"),
@@ -440,7 +439,7 @@ func TestConvertFields(t *testing.T) {
 		},
 		{
 			name:   "with an interface map",
-			fields: logrus.Fields{"hello": map[interface{}]interface{}{1: "question", "answer": 42}},
+			fields: logrus.Fields{"hello": map[any]any{1: "question", "answer": 42}},
 			want: []log.KeyValue{
 				log.Map("hello", log.Int("answer", 42), log.String("1", "question")),
 			},

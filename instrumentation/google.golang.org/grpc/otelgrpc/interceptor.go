@@ -12,6 +12,10 @@ import (
 	"net"
 	"strconv"
 
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	semconv "go.opentelemetry.io/otel/semconv/v1.34.0"
+	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc"
 	grpc_codes "google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -19,17 +23,13 @@ import (
 	"google.golang.org/protobuf/proto"
 
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc/internal"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/codes"
-	semconv "go.opentelemetry.io/otel/semconv/v1.34.0"
-	"go.opentelemetry.io/otel/trace"
 )
 
 type messageType attribute.KeyValue
 
 // Event adds an event of the messageType to the span associated with the
 // passed context with a message id.
-func (m messageType) Event(ctx context.Context, id int, _ interface{}) {
+func (m messageType) Event(ctx context.Context, id int, _ any) {
 	span := trace.SpanFromContext(ctx)
 	if !span.IsRecording() {
 		return
@@ -62,16 +62,16 @@ type clientStream struct {
 
 var _ = proto.Marshal
 
-func (w *clientStream) RecvMsg(m interface{}) error {
+func (w *clientStream) RecvMsg(m any) error {
 	err := w.ClientStream.RecvMsg(m)
-
-	if err == nil && !w.desc.ServerStreams {
+	switch {
+	case err == nil && !w.desc.ServerStreams:
 		w.endSpan(nil)
-	} else if errors.Is(err, io.EOF) {
+	case errors.Is(err, io.EOF):
 		w.endSpan(nil)
-	} else if err != nil {
+	case err != nil:
 		w.endSpan(err)
-	} else {
+	default:
 		w.receivedMessageID++
 
 		if w.receivedEvent {
@@ -82,7 +82,7 @@ func (w *clientStream) RecvMsg(m interface{}) error {
 	return err
 }
 
-func (w *clientStream) SendMsg(m interface{}) error {
+func (w *clientStream) SendMsg(m any) error {
 	err := w.ClientStream.SendMsg(m)
 
 	w.sentMessageID++

@@ -11,24 +11,23 @@ import (
 	"testing"
 	"time"
 
-	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/sdk/trace/tracetest"
 	semconv "go.opentelemetry.io/otel/semconv/v1.34.0"
 	oteltrace "go.opentelemetry.io/otel/trace"
-
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"go.uber.org/goleak"
 	"google.golang.org/grpc"
 	grpc_codes "google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/interop/grpc_testing"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/test/bufconn"
 
-	"google.golang.org/grpc/interop/grpc_testing"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 )
 
 func getSpanFromRecorder(sr *tracetest.SpanRecorder, name string) (trace.ReadOnlySpan, bool) {
@@ -64,8 +63,8 @@ type mockClientStream struct {
 	msgs []grpc_testing.SimpleResponse
 }
 
-func (mockClientStream) SendMsg(m interface{}) error { return nil }
-func (c *mockClientStream) RecvMsg(m interface{}) error {
+func (mockClientStream) SendMsg(m any) error { return nil }
+func (c *mockClientStream) RecvMsg(m any) error {
 	if len(c.msgs) == 0 {
 		return io.EOF
 	}
