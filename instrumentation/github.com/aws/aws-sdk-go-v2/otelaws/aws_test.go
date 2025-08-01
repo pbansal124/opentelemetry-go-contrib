@@ -9,14 +9,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
+	awsSignerV4 "github.com/aws/aws-sdk-go-v2/aws/signer/v4"
 	"github.com/aws/smithy-go/middleware"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-
-	"github.com/aws/aws-sdk-go-v2/aws"
-	awsSignerV4 "github.com/aws/aws-sdk-go-v2/aws/signer/v4"
-
 	"go.opentelemetry.io/otel/propagation"
 )
 
@@ -60,7 +58,7 @@ func Test_otelMiddlewares_finalizeMiddlewareAfter(t *testing.T) {
 		},
 	}
 
-	next := middleware.HandlerFunc(func(ctx context.Context, input interface{}) (output interface{}, metadata middleware.Metadata, err error) {
+	next := middleware.HandlerFunc(func(ctx context.Context, input any) (output any, metadata middleware.Metadata, err error) {
 		return nil, middleware.Metadata{}, nil
 	})
 
@@ -95,7 +93,7 @@ func Test_otelMiddlewares_finalizeMiddlewareAfter_Noop(t *testing.T) {
 	// Non request input should trigger noop
 	input := &struct{}{}
 
-	next := middleware.HandlerFunc(func(ctx context.Context, input interface{}) (output interface{}, metadata middleware.Metadata, err error) {
+	next := middleware.HandlerFunc(func(ctx context.Context, input any) (output any, metadata middleware.Metadata, err error) {
 		return nil, middleware.Metadata{}, nil
 	})
 
@@ -113,7 +111,7 @@ type mockHTTPPresigner struct{}
 
 func (f mockHTTPPresigner) PresignHTTP(
 	ctx context.Context, credentials aws.Credentials, r *http.Request,
-	payloadHash string, service string, region string, signingTime time.Time,
+	payloadHash, service, region string, signingTime time.Time,
 	optFns ...func(*awsSignerV4.SignerOptions),
 ) (
 	url string, signedHeader http.Header, err error,
@@ -153,7 +151,7 @@ func Test_otelMiddlewares_presignedRequests(t *testing.T) {
 		},
 	}
 
-	next := middleware.HandlerFunc(func(ctx context.Context, input interface{}) (output interface{}, metadata middleware.Metadata, err error) {
+	next := middleware.HandlerFunc(func(ctx context.Context, input any) (output any, metadata middleware.Metadata, err error) {
 		return nil, middleware.Metadata{}, nil
 	})
 

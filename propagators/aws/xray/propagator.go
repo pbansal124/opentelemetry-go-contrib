@@ -112,18 +112,19 @@ func extract(headerVal string) (trace.SpanContext, error) {
 			return empty, errInvalidTraceHeader
 		}
 		value := part[equalsIndex+1:]
-		if strings.HasPrefix(part, traceIDKey) {
+		switch {
+		case strings.HasPrefix(part, traceIDKey):
 			scc.TraceID, err = parseTraceID(value)
 			if err != nil {
 				return empty, err
 			}
-		} else if strings.HasPrefix(part, parentIDKey) {
+		case strings.HasPrefix(part, parentIDKey):
 			// extract parentId
 			scc.SpanID, err = trace.SpanIDFromHex(value)
 			if err != nil {
 				return empty, errInvalidSpanIDLength
 			}
-		} else if strings.HasPrefix(part, sampleFlagKey) {
+		case strings.HasPrefix(part, sampleFlagKey):
 			// extract traceflag
 			scc.TraceFlags = parseTraceFlag(value)
 		}
@@ -132,7 +133,7 @@ func extract(headerVal string) (trace.SpanContext, error) {
 }
 
 // indexOf returns position of the first occurrence of a substr in str starting at pos index.
-func indexOf(str string, substr string, pos int) int {
+func indexOf(str, substr string, pos int) int {
 	index := strings.Index(str[pos:], substr)
 	if index > -1 {
 		index += pos
