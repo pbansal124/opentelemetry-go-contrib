@@ -77,18 +77,6 @@ func (gce *GCE) Detect(ctx context.Context) (*resource.Resource, error) {
 		attributes = append(attributes, semconv.HostType(hostType))
 	}
 
-	customMetadataKeys := []string{"cost-center"}
-	for _, key := range customMetadataKeys {
-		value, err := metadata.InstanceAttributeValueWithContext(ctx, key)
-		if err != nil {
-			errInfo = append(errInfo, "failed to get custom metadata "+key+": "+err.Error())
-			continue
-		}
-		if value != "" {
-			attributes = append(attributes, attribute.String("service."+key, value))
-		}
-	}
-
 	var aggregatedErr error
 	if len(errInfo) > 0 {
 		aggregatedErr = fmt.Errorf("detecting GCE resources: %s", errInfo)
