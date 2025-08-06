@@ -29,15 +29,15 @@ type detector struct {
 	detector gcpDetector
 }
 
-func(d *detector) GCECustomMetadata(ctx context.Context, attributeKey string) (string, error) {
-	metadataUrl := fmt.Sprintf( "instance/attributes/%s", attributeKey)
-	attributeValue, err := metadata.GetWithContext(ctx, metadataUrl)
-	if err != nil {
-		return "", err
-	}
+// func(d *detector) GCECustomMetadata(ctx context.Context, attributeKey string) (string, error) {
+// 	metadataUrl := fmt.Sprintf( "instance/attributes/%s", attributeKey)
+// 	attributeValue, err := metadata.GetWithContext(ctx, metadataUrl)
+// 	if err != nil {
+// 		return "", err
+// 	}
 
-	return attributeValue, nil
-}
+// 	return attributeValue, nil
+// }
 
 // Detect detects associated resources when running on GCE, GKE, GAE,
 // Cloud Run, and Cloud functions.
@@ -96,21 +96,22 @@ func (d *detector) Detect(ctx context.Context) (*resource.Resource, error) {
 		b.add(semconv.HostNameKey, d.detector.GCEHostName)
 		b.add(semconv.GCPGCEInstanceNameKey, d.detector.GCEInstanceName)
 		b.add(semconv.GCPGCEInstanceHostnameKey, d.detector.GCEInstanceHostname)
-		if val, err := d.GCECustomMetadata(ctx, "cost-center"); err == nil {
-			b.attrs = append(b.attrs, attribute.String("service.cost-center", val))
-		} else {
-			fmt.Printf("failed to retrieve custom metadata attribute cost-center")
-		}
-		if val, err := d.GCECustomMetadata(ctx, "business_unit"); err == nil {
-                        b.attrs = append(b.attrs, attribute.String("service.business_unit", val))
-                } else {
-                        fmt.Printf("failed to retrieve custom metadata attribute business_unit")
-                }
-		if val, err := d.GCECustomMetadata(ctx, "owner"); err == nil {
-                        b.attrs = append(b.attrs, attribute.String("service.owner", val))
-                } else {
-                        fmt.Printf("failed to retrieve custom metadata attribute owner")
-                }
+		// if val, err := d.GCECustomMetadata(ctx, "cost-center"); err == nil {
+		// 	b.attrs = append(b.attrs, attribute.String("service.cost-center", val))
+		// } else {
+		// 	fmt.Printf("failed to retrieve custom metadata attribute cost-center")
+		// }
+		// if val, err := d.GCECustomMetadata(ctx, "business_unit"); err == nil {
+  //                       b.attrs = append(b.attrs, attribute.String("service.business_unit", val))
+  //               } else {
+  //                       fmt.Printf("failed to retrieve custom metadata attribute business_unit")
+  //               }
+		// if val, err := d.GCECustomMetadata(ctx, "owner"); err == nil {
+  //                       b.attrs = append(b.attrs, attribute.String("service.owner", val))
+  //               } else {
+  //                       fmt.Printf("failed to retrieve custom metadata attribute owner")
+  //               }
+		b.add("cost-center", d.detector.GCECustomMetadata("cost-center))
 	default:
 		// We don't support this platform yet, so just return with what we have
 	}
