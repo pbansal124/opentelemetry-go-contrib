@@ -96,6 +96,7 @@ func (d *detector) Detect(ctx context.Context) (*resource.Resource, error) {
 		b.add(semconv.HostNameKey, d.detector.GCEHostName)
 		b.add(semconv.GCPGCEInstanceNameKey, d.detector.GCEInstanceName)
 		b.add(semconv.GCPGCEInstanceHostnameKey, d.detector.GCEInstanceHostname)
+		b.add("cost-center", d.detector.GCECustomMetadata("cost-center))
 		// if val, err := d.GCECustomMetadata(ctx, "cost-center"); err == nil {
 		// 	b.attrs = append(b.attrs, attribute.String("service.cost-center", val))
 		// } else {
@@ -111,7 +112,6 @@ func (d *detector) Detect(ctx context.Context) (*resource.Resource, error) {
   //               } else {
   //                       fmt.Printf("failed to retrieve custom metadata attribute owner")
   //               }
-		b.add("cost-center", d.detector.GCECustomMetadata("cost-center))
 	default:
 		// We don't support this platform yet, so just return with what we have
 	}
