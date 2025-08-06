@@ -4,12 +4,27 @@ go 1.23.8
 
 require (
 	cloud.google.com/go/compute/metadata v0.7.0
-	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.29.0
+	// github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.29.0
 	github.com/google/go-cmp v0.7.0
 	github.com/stretchr/testify v1.10.0
 	go.opentelemetry.io/otel v1.37.0
 	go.opentelemetry.io/otel/sdk v1.37.0
 )
+
+// replace opentelemetry-operations-go/detectors/gcp => ../../../opentelemetry-operations-go/detectors/gcp
+
+replace github.com/GoogleCloudPlatform/opentelemetry-operations-go => ../../../opentelemetry-operations-go
+
+replace github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp => ../../../opentelemetry-operations-go/detectors/gcp
+
+// github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.29.0
+// require opentelemetry-operations-go/detectors/gcp v0.0.0-00010101000000-000000000000
+
+// require github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.29.0
+
+// require github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.29.0
+
+require github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v0.0.0-00010101000000-000000000000
 
 require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect

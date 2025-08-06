@@ -10,6 +10,7 @@ import (
 
 	"cloud.google.com/go/compute/metadata"
 	"github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp"
+	// "opentelemetry-operations-go/detectors/gcp"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/sdk/resource"
 	semconv "go.opentelemetry.io/otel/semconv/v1.34.0"
@@ -97,11 +98,11 @@ func (d *detector) Detect(ctx context.Context) (*resource.Resource, error) {
 		b.add(semconv.GCPGCEInstanceNameKey, d.detector.GCEInstanceName)
 		b.add(semconv.GCPGCEInstanceHostnameKey, d.detector.GCEInstanceHostname)
 		// b.add("cost-center", d.detector.GCECustomMetadata("cost-center"))
-		// if val, err := d.GCECustomMetadata(ctx, "cost-center"); err == nil {
-		// 	b.attrs = append(b.attrs, attribute.String("service.cost-center", val))
-		// } else {
-		// 	fmt.Printf("failed to retrieve custom metadata attribute cost-center")
-		// }
+		if val, err := d.detector.GCECustomMetadata("cost-center"); err == nil {
+			b.attrs = append(b.attrs, attribute.String("service.cost-center", val))
+		} else {
+			fmt.Printf("failed to retrieve custom metadata attribute cost-center")
+		}
 		// if val, err := d.GCECustomMetadata(ctx, "business_unit"); err == nil {
   //                       b.attrs = append(b.attrs, attribute.String("service.business_unit", val))
   //               } else {
