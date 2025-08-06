@@ -30,8 +30,8 @@ type detector struct {
 }
 
 func(d *detector) GCECustomMetadata(ctx context.Context, attributeKey string) (string, error) {
-	metadataUrl := fmt.Sprintf( "instance/attributes/%s", attributeKey)
-	attributeValue, err := metadata.GetWithContext(ctx, metadataUrl)
+	metadataURL := fmt.Sprintf( "instance/attributes/%s", attributeKey)
+	attributeValue, err := metadata.GetWithContext(ctx, metadataURL)
 	if err != nil {
 		return "", err
 	}
